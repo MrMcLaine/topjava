@@ -38,7 +38,7 @@
         <c:set var="i" value="1"/>
 
         <c:forEach items="${listMeal}" var="mt1">
-            <tr>
+            <tr style="color:${mt1.excess ? 'greenyellow' : 'red'}">
                 <td>${i}</td>
                 <td>${mt1.dateTime}
                 </td>
