@@ -22,9 +22,7 @@ public class UserService {
         return repository.save(user);
     }
 
-    public void delete(int id) {
-        checkNotFoundWithId(repository.delete(id), id);
-    }
+    public void delete(int id) {checkNotFoundWithId(repository.delete(id), id);}
 
     public User get(int id) {
         return checkNotFoundWithId(repository.get(id), id);
