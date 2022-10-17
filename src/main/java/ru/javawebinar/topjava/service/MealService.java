@@ -8,14 +8,18 @@ import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.repository.inmemory.InMemoryMealRepository;
 import ru.javawebinar.topjava.to.MealTo;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
+
 @Service
 public class MealService {
 
     private MealRepository repository;
+
     @Autowired
     public MealService() {
         this.repository = new InMemoryMealRepository();
@@ -33,11 +37,21 @@ public class MealService {
         return (List<Meal>) repository.getAll(userId);
     }
 
-    public Meal save(int userId, Meal meal) {
-        return checkNotFoundWithId(repository.save(userId, meal), meal.getId());
+    public Meal create(int userId, Meal meal) {
+        return repository.save(userId, meal);
+    }
+
+    public void edit(int userId, Meal meal) {
+        checkNotFoundWithId(repository.save(userId, meal), meal.getId());
     }
 
     public List<MealTo> getTos(Collection<Meal> meals, int caloriesPerDay) {
         return repository.filterByPredicate(meals, caloriesPerDay, meal -> true);
+    }
+
+    public List<MealTo> getTosWithFilter(List<MealTo> meals,
+                                         String startDate, String finishDate,
+                                         String startTime, String finishTime) {
+        return repository.getTosWithFilter(meals, startDate, finishDate, startTime, finishTime);
     }
 }

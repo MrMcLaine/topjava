@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.web.meal;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
@@ -9,13 +8,14 @@ import ru.javawebinar.topjava.web.SecurityUtil;
 import java.util.Collection;
 import java.util.List;
 
+import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
+
 @Controller
-/*@RequestMapping("/meals")*/
 public class MealRestController {
     private MealService service;
 
-    public MealRestController() {
-        this.service = new MealService();
+    public MealRestController(MealService service) {
+        this.service = service;
     }
 
     public void delete(int id) {
@@ -30,12 +30,24 @@ public class MealRestController {
         return service.getAll(SecurityUtil.authUserId());
     }
 
-    public Meal save(Meal meal) {
-        return service.save(SecurityUtil.authUserId(), meal);
+    public Meal create(Meal meal) {
+        return service.create(SecurityUtil.authUserId(), meal);
     }
+
+    public void edit(int userId, Meal meal) {
+        assureIdConsistent(meal, userId);
+        service.edit(SecurityUtil.authUserId(), meal);
+    }
+
 
     public List<MealTo> getTos(Collection<Meal> meals, int caloriesPerDay) {
         service.getAll(SecurityUtil.authUserId());
         return service.getTos(meals, caloriesPerDay);
+    }
+
+    public List<MealTo> getTosWithFilter(List<MealTo> meals,
+                                         String startDate, String finishDate,
+                                         String startTime, String finishTime) {
+        return service.getTosWithFilter(meals, startDate, finishDate, startTime, finishTime);
     }
 }

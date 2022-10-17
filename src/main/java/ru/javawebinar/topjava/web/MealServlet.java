@@ -11,12 +11,16 @@ import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 import ru.javawebinar.topjava.web.user.AdminRestController;
+
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
@@ -24,27 +28,28 @@ import java.util.Objects;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
-
-
-        ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
-        private MealRestController mealController = appCtx.getBean(MealRestController.class);
-
+    private MealRestController mealController;
+    private ConfigurableApplicationContext appCtx;
 
     @Override
     public void init() {
-        mealController = new MealRestController();
+        appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
+        mealController = appCtx.getBean(MealRestController.class);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        String id = request.getParameter("id");
-        Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
-                LocalDateTime.parse(request.getParameter("dateTime")),
+
+        Meal meal = new Meal(LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
                 Integer.parseInt(request.getParameter("calories")));
-        log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-        mealController.save(meal);
+
+        if (request.getParameter("id").isEmpty()) {
+            mealController.create(meal);
+        } else {
+            mealController.edit(getId(request), meal);
+        }
         response.sendRedirect("meals");
     }
 
@@ -55,7 +60,6 @@ public class MealServlet extends HttpServlet {
         switch (action == null ? "all" : action) {
             case "delete":
                 int id = getId(request);
-                log.info("Delete id={}", id);
                 mealController.delete(id);
                 response.sendRedirect("meals");
                 break;
@@ -69,7 +73,6 @@ public class MealServlet extends HttpServlet {
                 break;
             case "all":
             default:
-                log.info("getAll");
                 request.setAttribute("meals",
                         mealController.getTos(mealController.getAll(), MealsUtil.DEFAULT_CALORIES_PER_DAY));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
@@ -81,4 +84,11 @@ public class MealServlet extends HttpServlet {
         String paramId = Objects.requireNonNull(request.getParameter("id"));
         return Integer.parseInt(paramId);
     }
+
+    @Override
+    public void destroy() {
+        appCtx.close();
+        super.destroy();
+    }
+
 }

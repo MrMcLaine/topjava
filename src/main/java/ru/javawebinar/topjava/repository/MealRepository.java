@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collection;
 import java.util.List;
@@ -21,8 +22,19 @@ public interface MealRepository {
 
     // ORDERED dateTime desc
     Collection<Meal> getAll(int userId);
+
     List<MealTo> getFilteredTos(Collection<Meal> meals, int caloriesPerDay, LocalTime startTime, LocalTime endTime);
+
     List<MealTo> filterByPredicate(Collection<Meal> meals, int caloriesPerDay, Predicate<Meal> filter);
+
     MealTo createTo(Meal meal, boolean excess);
+
+    List<MealTo> getTosWithFilter(List<MealTo> meals,
+                                  String startDate, String finishDate,
+                                  String startTime, String finishTime);
+
+    LocalDate localDateConvert(String date);
+
+    LocalTime localTimeConvert(String time);
 
 }

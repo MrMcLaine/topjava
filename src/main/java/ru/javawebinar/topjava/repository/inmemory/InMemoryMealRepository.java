@@ -6,6 +6,7 @@ import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collection;
@@ -16,15 +17,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
 @Repository
 public class InMemoryMealRepository implements MealRepository {
     /*    private final Map<Integer, Meal> repository = new ConcurrentHashMap<>();*/
     private final Map<Integer, Map<Integer, Meal>> repository = new ConcurrentHashMap<>();
     private final AtomicInteger counter = new AtomicInteger(0);
+    public static final int userId = 1;
+    public static final int adminId = 2;
 
     {
         //      MealsUtil.meals.forEach(this::save);
-        MealsUtil.meals.forEach(meal -> save(1, meal));
+        MealsUtil.meals.forEach(meal -> save(userId, meal));
     }
 
     @Override
@@ -82,6 +86,37 @@ public class InMemoryMealRepository implements MealRepository {
 
     public static boolean isBetweenHalfOpen(LocalTime lt, LocalTime startTime, LocalTime endTime) {
         return lt.compareTo(startTime) >= 0 && lt.compareTo(endTime) < 0;
+    }
+
+    public List<MealTo> getTosWithFilter(List<MealTo> meals,
+                                         String startDate, String finishDate,
+                                         String startTime, String finishTime) {
+        return meals.stream()
+                .filter(mealTo ->
+                        isBetweenDate(mealTo.getDateTime().toLocalDate(),
+                                localDateConvert(startDate),
+                                localDateConvert(finishDate)))
+                .filter(mealTo ->
+                        isBetweenTime(mealTo.getDateTime().toLocalTime(),
+                                localTimeConvert(startTime),
+                                localTimeConvert(finishTime)))
+                .collect(Collectors.toList());
+    }
+
+    public static boolean isBetweenDate(LocalDate mealDate, LocalDate startDate, LocalDate finishDate) {
+        return mealDate.compareTo(startDate) >= 0 && mealDate.compareTo(finishDate) < 0;
+    }
+
+    public static boolean isBetweenTime(LocalTime mealTime, LocalTime startTime, LocalTime finishTime) {
+        return mealTime.compareTo(startTime) >= 0 && mealTime.compareTo(finishTime) < 0;
+    }
+
+    public LocalDate localDateConvert(String date) {
+        return LocalDate.parse(date);
+    }
+
+    public LocalTime localTimeConvert(String time) {
+        return LocalTime.parse(time);
     }
 }
 

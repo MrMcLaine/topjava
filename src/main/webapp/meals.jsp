@@ -14,13 +14,74 @@
         .excess {
             color: red;
         }
+
+        #filter-table {
+            width: 100%;
+        }
+
+        #filter-table th {
+            background-color: #dadada;
+        }
+
+        #filter-table td, #filter-table th {
+            padding: 5px;
+            border-bottom: 1px solid #ccc;
+        }
     </style>
 </head>
 <body>
 <section>
-    <h3><a href="index.html">Home</a></h3>
+    <h1><a href="index.html">Home</a></h1>
+    <form method="post" action="meals&action=filter">
+    <table id="filter-table">
+        <tr>
+            <th>От даты (включая)</th>
+            <th>До даты (включая)</th>
+            <th>От времени (включая)</th>
+            <th>До времени (включая)</th>
+        </tr>
+        <tr class='table-filters'>
+            <td>
+                <input type="date" value=${param.startDate} name="startDate"/>
+            </td>
+            <td>
+                <input type="date" value=${param.finishDate} name="finishDate"/>
+            </td>
+            <td>
+                <input type="time" value=${param.startTime} name="startTime"/>
+            </td>
+            <td>
+                <input type="time" value=${param.finishTime} name="finishTime"/>
+            </td>
+        </tr>
+    </table>
+    <button type="submit">Фильтр</button>
+    </form>
+    <%--<form method="post" action="filteredMeals">
+        <dl>
+            <dt>От даты (включая):</dt>
+            <dd><input type="date" value="" name="firstDateTime" required></dd>
+        </dl>
+        <dl>
+            <dt>До даты (включая):</dt>
+            <dd><input type="date" value="" name="secondDateTime" required></dd>
+        </dl>
+        <dl>
+            <dt>От времени (включая):</dt>
+            <dd><input type="time" value="" name="firstDateTime" required></dd>
+        </dl>
+        <dl>
+            <dt>До времени (включая):</dt>
+            <dd><input type="time" value="" name="firstDateTime" required></dd>
+        </dl>
+
+        <button type="submit">Фильтр</button>
+        <button onclick="window.history.back()" type="button">Cancel</button>
+    </form>
+--%>
+    <h2></h2>
     <hr/>
-    <h2>Meals</h2>
+    <h3>Meals</h3>
     <a href="meals?action=create">Add Meal</a>
     <br><br>
     <table border="1" cellpadding="8" cellspacing="0">
