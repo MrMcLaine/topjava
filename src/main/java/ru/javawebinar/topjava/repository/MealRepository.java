@@ -2,8 +2,6 @@ package ru.javawebinar.topjava.repository;
 
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
-
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collection;
 import java.util.List;
@@ -29,12 +27,7 @@ public interface MealRepository {
 
     MealTo createTo(Meal meal, boolean excess);
 
-    List<MealTo> getTosWithFilter(List<MealTo> meals,
-                                  String startDate, String finishDate,
+    List<MealTo> getTosWithFilter(int userId, int calPerDay, String startDate, String finishDate,
                                   String startTime, String finishTime);
-
-    LocalDate localDateConvert(String date);
-
-    LocalTime localTimeConvert(String time);
 
 }

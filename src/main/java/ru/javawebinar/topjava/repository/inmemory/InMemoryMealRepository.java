@@ -3,28 +3,21 @@ package ru.javawebinar.topjava.repository.inmemory;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.to.MealTo;
-import ru.javawebinar.topjava.util.DateTimeUtil;
+import ru.javawebinar.topjava.to.MealTo;;
 import ru.javawebinar.topjava.util.MealsUtil;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 @Repository
 public class InMemoryMealRepository implements MealRepository {
     /*    private final Map<Integer, Meal> repository = new ConcurrentHashMap<>();*/
     private final Map<Integer, Map<Integer, Meal>> repository = new ConcurrentHashMap<>();
     private final AtomicInteger counter = new AtomicInteger(0);
     public static final int userId = 1;
-    public static final int adminId = 2;
 
     {
         //      MealsUtil.meals.forEach(this::save);
@@ -46,7 +39,7 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public boolean delete(int userId, int id) {
         Map<Integer, Meal> filteredMeals = repository.get(userId);
-        return filteredMeals.remove(id) != null && filteredMeals != null;
+        return filteredMeals.remove(id) != null;
     }
 
     @Override
@@ -87,35 +80,38 @@ public class InMemoryMealRepository implements MealRepository {
     public static boolean isBetweenHalfOpen(LocalTime lt, LocalTime startTime, LocalTime endTime) {
         return lt.compareTo(startTime) >= 0 && lt.compareTo(endTime) < 0;
     }
-
-    public List<MealTo> getTosWithFilter(List<MealTo> meals,
-                                         String startDate, String finishDate,
+    public List<MealTo> getTosWithFilter(int userId, int calPerDay, String startDate, String finishDate,
                                          String startTime, String finishTime) {
-        return meals.stream()
-                .filter(mealTo ->
-                        isBetweenDate(mealTo.getDateTime().toLocalDate(),
-                                localDateConvert(startDate),
-                                localDateConvert(finishDate)))
-                .filter(mealTo ->
-                        isBetweenTime(mealTo.getDateTime().toLocalTime(),
-                                localTimeConvert(startTime),
-                                localTimeConvert(finishTime)))
-                .collect(Collectors.toList());
+        List<Meal> mealsFilteredByDate = getBetweenDate(userId, localDateConvert(startDate), localDateConvert(finishDate));
+        return getFilteredTos(mealsFilteredByDate, calPerDay, localTimeConvert(startTime), localTimeConvert(finishTime));
     }
 
-    public static boolean isBetweenDate(LocalDate mealDate, LocalDate startDate, LocalDate finishDate) {
-        return mealDate.compareTo(startDate) >= 0 && mealDate.compareTo(finishDate) < 0;
+    public List<Meal> getBetweenDate(int userId, LocalDate startDate, LocalDate finishDate) {
+        Map<Integer, Meal> meals = repository.get(userId);
+        Set<Integer> keys = meals.keySet();
+        int minKey = 32;
+        int maxKey = 0;
+        for(Integer key : keys) {
+            if (minKey > key) {
+                minKey = key;
+            } else if (maxKey < key) {
+                maxKey = key;
+            }
+        }
+        List<Meal> resultList = new ArrayList<>();
+        for(int i = minKey; i < maxKey + 1; i++) {
+            if (i >= startDate.getDayOfMonth() && i <= finishDate.getDayOfMonth()) {
+                resultList.add(meals.get(i));
+            }
+        }
+        return resultList;
     }
 
-    public static boolean isBetweenTime(LocalTime mealTime, LocalTime startTime, LocalTime finishTime) {
-        return mealTime.compareTo(startTime) >= 0 && mealTime.compareTo(finishTime) < 0;
-    }
-
-    public LocalDate localDateConvert(String date) {
+    public static LocalDate localDateConvert (String date) {
         return LocalDate.parse(date);
     }
 
-    public LocalTime localTimeConvert(String time) {
+    public static LocalTime localTimeConvert (String time) {
         return LocalTime.parse(time);
     }
 }

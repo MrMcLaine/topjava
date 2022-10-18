@@ -7,18 +7,14 @@ import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.repository.inmemory.InMemoryMealRepository;
 import ru.javawebinar.topjava.to.MealTo;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.Collection;
 import java.util.List;
-
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
 @Service
 public class MealService {
 
-    private MealRepository repository;
+    private final MealRepository repository;
 
     @Autowired
     public MealService() {
@@ -49,9 +45,8 @@ public class MealService {
         return repository.filterByPredicate(meals, caloriesPerDay, meal -> true);
     }
 
-    public List<MealTo> getTosWithFilter(List<MealTo> meals,
-                                         String startDate, String finishDate,
+    public List<MealTo> getTosWithFilter(int userId, int calPerDay, String startDate, String finishDate,
                                          String startTime, String finishTime) {
-        return repository.getTosWithFilter(meals, startDate, finishDate, startTime, finishTime);
+        return repository.getTosWithFilter(userId, calPerDay, startDate, finishDate, startTime, finishTime);
     }
 }
