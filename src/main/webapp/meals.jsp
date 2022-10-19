@@ -30,15 +30,6 @@
     </style>
 </head>
 <body>
-<form method="post" action="users">
-    <label>
-        <select name="userId">
-            <option value="1">User</option>
-            <option value="2">Admin</option>
-        </select>
-    </label>
-    <button type="submit">Select</button>
-</form>
 <section>
     <h1><a href="index.html">Home</a></h1>
     <form method="get" action="meals">
@@ -62,9 +53,9 @@
                 </label>
             </td>
             <td>
-                <label>
+
                     <input type="time" value=${param.startTime} name="startTime"/>
-                </label>
+
             </td>
             <td>
                 <label>

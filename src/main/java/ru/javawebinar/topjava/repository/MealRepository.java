@@ -1,11 +1,8 @@
 package ru.javawebinar.topjava.repository;
 
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.to.MealTo;
-import java.time.LocalTime;
-import java.util.Collection;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.function.Predicate;
 
 // TODO add userId
 public interface MealRepository {
@@ -19,15 +16,8 @@ public interface MealRepository {
     Meal get(int userId, int id);
 
     // ORDERED dateTime desc
-    Collection<Meal> getAll(int userId);
+    List<Meal> getAll(int userId);
 
-    List<MealTo> getFilteredTos(Collection<Meal> meals, int caloriesPerDay, LocalTime startTime, LocalTime endTime);
 
-    List<MealTo> filterByPredicate(Collection<Meal> meals, int caloriesPerDay, Predicate<Meal> filter);
-
-    MealTo createTo(Meal meal, boolean excess);
-
-    List<MealTo> getTosWithFilter(int userId, int calPerDay, String startDate, String finishDate,
-                                  String startTime, String finishTime);
-
+    List<Meal> getBetweenDate(int userId, LocalDate startDate, LocalDate finishDate);
 }

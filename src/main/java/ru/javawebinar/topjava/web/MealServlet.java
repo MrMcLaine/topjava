@@ -5,18 +5,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.Role;
-import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.to.MealTo;
-import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.meal.MealRestController;
-import ru.javawebinar.topjava.web.user.AdminRestController;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
@@ -32,7 +29,7 @@ public class MealServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
 
@@ -44,7 +41,7 @@ public class MealServlet extends HttpServlet {
             if (request.getParameter("id").isEmpty()) {
                 mealController.create(meal);
             } else {
-                mealController.edit(getId(request), meal);
+                mealController.update(getId(request), meal);
             }
             response.sendRedirect("meals");
         }
@@ -56,10 +53,15 @@ public class MealServlet extends HttpServlet {
 
         switch (action == null ? "all" : action) {
             case "filter":
-                String startDate = request.getParameter("startDate");
-                String finishDate = request.getParameter("finishDate");
-                String startTime = request.getParameter("startTime");
-                String finishTime = request.getParameter("finishTime");
+                LocalDate startDate = request.getParameter("startDate").isEmpty() ||
+                        request.getParameter("startDate") == null ?
+                        null : LocalDate.parse(request.getParameter("startDate"));
+                LocalDate finishDate = request.getParameter("finishDate").isEmpty() ?
+                        null : LocalDate.parse(request.getParameter("finishDate"));
+                LocalTime startTime = request.getParameter("startTime").isEmpty() ?
+                        null : LocalTime.parse(request.getParameter("startTime"));
+                LocalTime finishTime = request.getParameter("finishTime").isEmpty() ?
+                        null : LocalTime.parse(request.getParameter("finishTime"));
                 request.setAttribute("meals", mealController.getTosWithFilter(startDate, finishDate, startTime, finishTime)
                 );
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
@@ -80,7 +82,7 @@ public class MealServlet extends HttpServlet {
             case "all":
             default:
                 request.setAttribute("meals",
-                        mealController.getTos(mealController.getAll(), MealsUtil.DEFAULT_CALORIES_PER_DAY));
+                        mealController.getAll());
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }
