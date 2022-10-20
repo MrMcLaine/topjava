@@ -17,8 +17,9 @@ import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 
 @Controller
 public class MealRestController {
-    private final MealService service;
+
     private static final Logger log = LoggerFactory.getLogger(MealRestController.class);
+    private final MealService service;
 
     public MealRestController(MealService service) {
         this.service = service;
@@ -36,7 +37,7 @@ public class MealRestController {
 
     public List<MealTo> getAll() {
         log.info("getAll meals user {}", SecurityUtil.authUserId());
-        return MealsUtil.getTos(service.getAll(SecurityUtil.authUserId()), MealsUtil.DEFAULT_CALORIES_PER_DAY);
+        return MealsUtil.getTos(service.getAll(SecurityUtil.authUserId()), SecurityUtil.authUserCaloriesPerDay());
     }
 
     public Meal create(Meal meal) {
@@ -45,9 +46,9 @@ public class MealRestController {
         return service.create(SecurityUtil.authUserId(), meal);
     }
 
-    public void update(int userId, Meal meal) {
-        assureIdConsistent(meal, userId);
-        log.info("edit {} user {}", meal, userId);
+    public void update(int Id, Meal meal) {
+        assureIdConsistent(meal, Id);
+        log.info("edit {} user {}", meal, Id);
         service.update(SecurityUtil.authUserId(), meal);
     }
 

@@ -4,8 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.web.meal.MealRestController;
+import ru.javawebinar.topjava.model.Meal;import ru.javawebinar.topjava.web.meal.MealRestController;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -31,9 +30,7 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
-        String action = request.getParameter("action");
 
-        if (action == null) {
             Meal meal = new Meal(LocalDateTime.parse(request.getParameter("dateTime")),
                     request.getParameter("description"),
                     Integer.parseInt(request.getParameter("calories")));
@@ -44,7 +41,6 @@ public class MealServlet extends HttpServlet {
                 mealController.update(getId(request), meal);
             }
             response.sendRedirect("meals");
-        }
     }
 
     @Override
@@ -53,14 +49,17 @@ public class MealServlet extends HttpServlet {
 
         switch (action == null ? "all" : action) {
             case "filter":
-                LocalDate startDate = request.getParameter("startDate").isEmpty() ||
-                        request.getParameter("startDate") == null ?
+                LocalDate startDate = request.getParameter("startDate") == null ||
+                        request.getParameter("startDate").isEmpty() ?
                         null : LocalDate.parse(request.getParameter("startDate"));
-                LocalDate finishDate = request.getParameter("finishDate").isEmpty() ?
+                LocalDate finishDate = request.getParameter("finishDate") == null ||
+                        request.getParameter("finishDate").isEmpty() ?
                         null : LocalDate.parse(request.getParameter("finishDate"));
-                LocalTime startTime = request.getParameter("startTime").isEmpty() ?
+                LocalTime startTime = request.getParameter("startTime") == null ||
+                        request.getParameter("startTime").isEmpty() ?
                         null : LocalTime.parse(request.getParameter("startTime"));
-                LocalTime finishTime = request.getParameter("finishTime").isEmpty() ?
+                LocalTime finishTime = request.getParameter("finishTime") == null ||
+                        request.getParameter("finishTime").isEmpty() ?
                         null : LocalTime.parse(request.getParameter("finishTime"));
                 request.setAttribute("meals", mealController.getTosWithFilter(startDate, finishDate, startTime, finishTime)
                 );

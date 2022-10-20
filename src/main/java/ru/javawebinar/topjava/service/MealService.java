@@ -44,7 +44,6 @@ public class MealService {
 
     public List<MealTo> getTosWithFilter(int userId, int calPerDay, LocalDate startDate, LocalDate finishDate,
                                          LocalTime startTime, LocalTime finishTime) {
-
         List<Meal> mealsFilteredByDate = repository.getBetweenDate(userId, isStartDayNull(startDate), isFinishDayNull(finishDate));
         return getFilteredTos(mealsFilteredByDate, calPerDay, isStartTimeNull(startTime), isFinishTimeNull(finishTime));
     }
