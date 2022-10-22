@@ -28,12 +28,13 @@ CREATE TABLE user_roles
 
 CREATE SEQUENCE global_seq_meals START WITH 100000;
 
-CREATE TABLE meals
+CREATE TABLE meals_table
 (
+    user_id     INTEGER                           NOT NULL,
     id          INTEGER PRIMARY KEY DEFAULT nextval('global_seq_meals'),
     date_time   TIMESTAMP           DEFAULT now() NOT NULL,
     description VARCHAR                           NOT NULL,
     calories    INTEGER                           NOT NULL
 );
 
-CREATE UNIQUE INDEX index_meals ON meals (date_time);
+CREATE UNIQUE INDEX index_meals ON meals_table (date_time);
