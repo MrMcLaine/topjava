@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
@@ -11,6 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
+
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
@@ -72,4 +74,35 @@ public class MealServiceTest extends TestCase {
         assertMatch(created, newMeal);
         assertMatch(service.get(newId, userTest_ID), newMeal);
     }
+
+    //delete, update, get not found
+    @Test
+    public void deletedNotFound() {
+        assertThrows(NotFoundException.class, () ->
+                service.delete(MEAL_ID_FIRST, USER_ID_NOT_FOUND));
+    }
+
+    @Test
+    public void updateNotFound() {
+        Meal mealUpdate = getUpdated();
+        assertThrows(NotFoundException.class, () ->
+                service.update(mealUpdate, USER_ID_NOT_FOUND));
+    }
+
+    @Test
+    public void getNotFound() {
+        assertThrows(NotFoundException.class, () ->
+                service.get(MEAL_ID_FIRST, USER_ID_NOT_FOUND));
+    }
+
+    // duplicateDateTimeCreate
+    @Test
+    public void duplicateTimeCreate() {
+        assertThrows(DataAccessException.class, () ->
+                service.create(new Meal(MEAL_DUPLICATE.getDateTime(),
+                        MEAL_DUPLICATE.getDescription(),
+                        MEAL_DUPLICATE.getCalories()), USER_ID));
+    }
+
+
 }

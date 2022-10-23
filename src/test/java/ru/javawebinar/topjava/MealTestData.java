@@ -19,6 +19,7 @@ public class MealTestData {
     public static final int MEAL_ID_FIFTH = START_SEQ + 7;
     public static final int MEAL_ID_SIXTH = START_SEQ + 8;
     public static final int MEAL_ID_SEVENTH = START_SEQ + 9;
+    public static final int USER_ID_NOT_FOUND = 1;
 
 
     public static final Meal mealFirst = new Meal(MEAL_ID_FIRST, LocalDateTime.of(2020, Month.JANUARY,
@@ -35,21 +36,13 @@ public class MealTestData {
             31, 13, 0), "Обед", 500);
     public static final Meal mealSeventh = new Meal(MEAL_ID_SEVENTH, LocalDateTime.of(2020, Month.JANUARY,
             31, 20, 0), "Ужин", 410);
+    public static final Meal MEAL_DUPLICATE = new Meal(MEAL_ID_SEVENTH + 1, LocalDateTime.of(2020, Month.JANUARY,
+            30, 10, 0, 0), "Дубликат", 1);
     public static final List<Meal> MEAL_LIST = Arrays.asList(mealFirst, mealSecond, mealThird, mealFourth,
             mealFifth, mealSixth, mealSeventh);
 
-    //to get & update
-    public static void assertMatchToGet(Meal actual, Meal... expected) {
-        assertThat(actual).usingRecursiveComparison().ignoringFields("registered", "roles").isEqualTo(expected);
-    }
-
     public static void assertMatch(Meal actual, Meal expected) {
         assertThat(actual).usingRecursiveComparison().ignoringFields("registered", "roles").isEqualTo(expected);
-    }
-
-    //to get all
-    public static void assertMatch(List<Meal> actual, Meal... expected) {
-        assertMatch(actual, Arrays.asList(expected));
     }
 
     public static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
