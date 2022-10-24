@@ -20,6 +20,7 @@ public class JdbcMealRepository implements MealRepository {
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final SimpleJdbcInsert insertMeal;
+
     @Autowired
     public JdbcMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.insertMeal = new SimpleJdbcInsert(jdbcTemplate)
@@ -44,13 +45,13 @@ public class JdbcMealRepository implements MealRepository {
             Number newKey = insertMeal.executeAndReturnKey(map);
             meal.setId(newKey.intValue());
         } else if (namedParameterJdbcTemplate.update(
-            "UPDATE meals_table SET id=:id, " +
-                    "date_time=:date_time, description=:description, " +
-            "calories=:calories WHERE id=:id AND user_id=:user_id", map) == 0) {
-        return null;
-    }
+                "UPDATE meals_table SET id=:id, " +
+                        "date_time=:date_time, description=:description, " +
+                        "calories=:calories WHERE id=:id AND user_id=:user_id", map) == 0) {
+            return null;
+        }
         return meal;
-}
+    }
 
     @Override
     public boolean delete(int id, int userId) {

@@ -6,15 +6,18 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.inmemory.InMemoryUserRepository;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import static ru.javawebinar.topjava.UserTestData.NOT_FOUND;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
-@ContextConfiguration("classpath:spring/spring-app.xml")
+@Controller
+@ContextConfiguration("classpath:spring2/spring-app.xml")
 @RunWith(SpringRunner.class)
 @Ignore
 public class InMemoryAdminRestControllerSpringTest {
@@ -24,6 +27,8 @@ public class InMemoryAdminRestControllerSpringTest {
 
     @Autowired
     private InMemoryUserRepository repository;
+
+
 
     @Before
     public void setUp() {
@@ -39,5 +44,9 @@ public class InMemoryAdminRestControllerSpringTest {
     @Test
     public void deleteNotFound() {
         Assert.assertThrows(NotFoundException.class, () -> controller.delete(NOT_FOUND));
+    }
+
+    public void create(User user) {
+        repository.save(user);
     }
 }
