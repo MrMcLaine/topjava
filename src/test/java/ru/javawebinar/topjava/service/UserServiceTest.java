@@ -65,7 +65,8 @@ public class UserServiceTest {
 
     @Test
     public void get() {
-        User user = service.get(USER_ID);
+        User user;
+        user = service.get(USER_ID);
         assertMatch(user, UserTestData.user);
     }
 

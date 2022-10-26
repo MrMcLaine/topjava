@@ -25,14 +25,14 @@ CREATE TABLE user_roles
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
-CREATE TABLE meals_table
+CREATE TABLE MEALS
 (
-    user_id     INTEGER           NOT NULL,
+    user_id     INTEGER   NOT NULL,
     id          INTEGER PRIMARY KEY DEFAULT nextval('global_seq'),
-    date_time TIMESTAMP DEFAULT now() NOT NULL,
-    description TEXT              NOT NULL,
-    calories    INT               NOT NULL,
-    FOREIGN KEY (id) REFERENCES meals_table (id) ON DELETE CASCADE
+    date_time   TIMESTAMP NOT NULL,
+    description TEXT      NOT NULL,
+    calories    INT       NOT NULL,
+    FOREIGN KEY (id) REFERENCES MEALS (id) ON DELETE CASCADE
 );
 
-CREATE UNIQUE INDEX index_meals_date_time_idx ON meals_table (user_id, date_time);
+CREATE UNIQUE INDEX index_meals_date_time_idx ON MEALS (user_id, date_time);
