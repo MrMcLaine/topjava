@@ -13,7 +13,7 @@ import java.time.LocalTime;
 @NamedQueries({
         @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal m WHERE m.id=:id AND m.user.id=:userId"),
         @NamedQuery(name = Meal.BETWEEN_HALF_OPEN, query = "SELECT m FROM Meal m " +
-                "WHERE m.dateTime BETWEEN :startDT AND :endDT AND m.user.id=:userId ORDER BY m.dateTime"),
+                "WHERE m.dateTime>=:startDT AND m.dateTime<:endDT AND m.user.id=:userId ORDER BY m.dateTime DESC"),
         @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT m FROM Meal m WHERE m.user.id=:userId")
 })
 @Entity
