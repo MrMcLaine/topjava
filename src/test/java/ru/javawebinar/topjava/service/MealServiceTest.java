@@ -31,6 +31,7 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
+
     private static final Logger log = getLogger(MealServiceTest.class);
     @Rule
     public final ExpectedException exception = ExpectedException.none();

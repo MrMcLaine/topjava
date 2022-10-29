@@ -9,7 +9,9 @@ import ru.javawebinar.topjava.repository.MealRepository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 @Transactional(readOnly = true)
@@ -21,6 +23,9 @@ public class JpaMealRepository implements MealRepository {
     @Override
     @Transactional
     public Meal save(Meal meal, int userId) {
+        if(!meal.isNew() && get(meal.getId(), userId) == null) {
+            return null;
+        }
         User ref = em.getReference(User.class, userId);
         Meal mealTemp = meal;
         mealTemp.setUser(ref);
@@ -28,7 +33,7 @@ public class JpaMealRepository implements MealRepository {
             em.persist(mealTemp);
             return mealTemp;
         } else {
-            return em.merge(mealTemp);
+            return em.merge(meal);
         }
     }
 
@@ -52,7 +57,9 @@ public class JpaMealRepository implements MealRepository {
     public List<Meal> getAll(int userId) {
         return em.createNamedQuery(Meal.ALL_SORTED, Meal.class)
                 .setParameter("userId", userId)
-                .getResultList();
+                .getResultList().stream()
+                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
+                .collect(Collectors.toList());
     }
 
     @Override
