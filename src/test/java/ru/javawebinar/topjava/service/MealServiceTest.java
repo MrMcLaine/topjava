@@ -1,4 +1,5 @@
 package ru.javawebinar.topjava.service;
+
 import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -17,8 +18,6 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertThrows;
@@ -36,25 +35,23 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 public class MealServiceTest {
 
     private static final Logger log = getLogger(MealServiceTest.class);
-    private static final List<String> times = new ArrayList<>();
+    public static StringBuilder collectString = new StringBuilder();
 
     @Rule
     public Stopwatch stopwatch = new Stopwatch() {
         @Override
         protected void finished(long nanos, Description description) {
             String testName = description.getMethodName();
-            String result = String.format("Test %s, spent %d microseconds",
-                    testName, TimeUnit.NANOSECONDS.toMicros(nanos));
-            times.add(result);
+            String result = String.format("\n%-25s - %d",
+                    testName, TimeUnit.NANOSECONDS.toMillis(nanos));
+            collectString.append(result);
             log.info(result + "\n");
         }
     };
 
     @AfterClass
     public static void showTimes() {
-        for (String time : times) {
-            log.info(time);
-        }
+        log.info(String.valueOf(collectString));
     }
 
     @Autowired
