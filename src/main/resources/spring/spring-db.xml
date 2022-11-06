@@ -13,8 +13,8 @@
 
 <!--    <context:component-scan base-package="ru.javawebinar.**.repository.jpa"/>-->
 
-    <context:component-scan base-package="ru.javawebinar.**.repository.datajpa"/>
-    <jpa:repositories base-package="ru.javawebinar.**.repository.datajpa"/>
+<!--    <context:component-scan base-package="ru.javawebinar.**.repository.datajpa"/>
+    <jpa:repositories base-package="ru.javawebinar.**.repository.datajpa"/>-->
 
     <jdbc:initialize-database data-source="dataSource" enabled="${database.init}">
         <jdbc:script location="${jdbc.initLocation}"/>
@@ -62,13 +62,31 @@
     <beans profile="hsqldb">
         <context:property-placeholder location="classpath:db/hsqldb.properties" system-properties-mode="OVERRIDE"/>
 
-        <!--no pooling-->
+<!--        &lt;!&ndash;no pooling&ndash;&gt;
         <bean id="dataSource"
               class="org.springframework.jdbc.datasource.DriverManagerDataSource"
               p:driverClassName="org.hsqldb.jdbcDriver"
               p:url="${database.url}"
               p:username="${database.username}"
-              p:password="${database.password}"/>
+              p:password="${database.password}"/>-->
+    </beans>
+
+    <beans profile="jdbc">
+        <context:component-scan base-package="ru.javawebinar.**.repository.jdbc"/>
+        <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+            <constructor-arg ref="dataSource"/>
+        </bean>
+
+        <bean id="namedJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+            <constructor-arg ref="jdbcTemplate"/>
+        </bean>
+    </beans>
+    <beans profile="jpa">
+        <context:component-scan base-package="ru.javawebinar.**.repository.jpa"/>
+    </beans>
+    <beans profile="datajpa">
+        <context:component-scan base-package="ru.javawebinar.**.repository.datajpa"/>
+        <jpa:repositories base-package="ru.javawebinar.**.repository.datajpa"/>
     </beans>
 
     <beans profile="postgres">
@@ -89,12 +107,5 @@
               p:url="${database.url}"
               p:username="${database.username}"
               p:password="${database.password}"/>
-    </beans>
-
-    <beans profile="jdbc">
-    </beans>
-    <beans profile="jpa">
-    </beans>
-    <beans profile="datajpa">
     </beans>
 </beans>
