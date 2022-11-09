@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.repository.datajpa;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
@@ -14,11 +13,11 @@ public class DataJpaMealRepository implements MealRepository {
 
     private final CrudMealRepository crudRepository;
 
-    @Autowired
     private CrudUserRepository crudUserRepository;
 
-    public DataJpaMealRepository(CrudMealRepository crudRepository) {
+    public DataJpaMealRepository(CrudMealRepository crudRepository, CrudUserRepository crudUserRepository) {
         this.crudRepository = crudRepository;
+        this.crudUserRepository = crudUserRepository;
     }
 
     @Override
@@ -27,7 +26,7 @@ public class DataJpaMealRepository implements MealRepository {
         if (!meal.isNew() && get(meal.getId(), userId) == null) {
             return null;
         }
-        meal.setUser(crudUserRepository.getOne(userId));
+        meal.setUser(crudUserRepository.getReferenceById(userId));
         return crudRepository.save(meal);
     }
 

@@ -15,7 +15,7 @@ import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
-public abstract class MealServiceTest extends AbstractServiceClass {
+public abstract class MealServiceTest extends AbstractServiceTest {
     @Autowired
     private MealService service;
 
@@ -37,6 +37,7 @@ public abstract class MealServiceTest extends AbstractServiceClass {
 
     @Test
     public void create() {
+
         Meal created = service.create(getNew(), USER_ID);
         int newId = created.id();
         Meal newMeal = getNew();

@@ -41,7 +41,8 @@ public abstract class JdbcMealRepository<T> implements MealRepository {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    @Profile("Profiles.POSTGRES_DB")
+    @Repository
+    @Profile("hsqldb")
     public static class LocalDateTimeConvert extends JdbcMealRepository<LocalDateTime> {
         public LocalDateTimeConvert(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
             super(jdbcTemplate, namedParameterJdbcTemplate);
@@ -51,8 +52,10 @@ public abstract class JdbcMealRepository<T> implements MealRepository {
         LocalDateTime convertTime(LocalDateTime localDateTime) {
             return localDateTime;
         }
+    }
 
-        @Profile("Profiles.HSQL_DB")
+        @Repository
+        @Profile("postgres")
         public static class TimestampConvert extends JdbcMealRepository<Timestamp> {
             public TimestampConvert(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
                 super(jdbcTemplate, namedParameterJdbcTemplate);
@@ -60,10 +63,9 @@ public abstract class JdbcMealRepository<T> implements MealRepository {
 
             @Override
             Timestamp convertTime(LocalDateTime localDateTime) {
-                return Timestamp.valueOf(localDateTime.toString());
+                return Timestamp.valueOf(localDateTime);
             }
         }
-    }
 
     @Override
     public Meal save(Meal meal, int userId) {
