@@ -1,7 +1,5 @@
-package ru.javawebinar.topjava.web;
+package ru.javawebinar.topjava.web.meal;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -22,19 +20,11 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 
 @Controller
 @RequestMapping(value = "meals")
-public class JspMealController extends AbstractController {
-    private static final Logger log = LoggerFactory.getLogger(JspMealController.class);
-
-    private int getId(HttpServletRequest request) {
-        String newId = Objects.requireNonNull(request.getParameter("id"));
-        return Integer.parseInt(newId);
-
-    }
+public class JspMealController extends AbstractMealController {
 
     @GetMapping("/create")
     public String create(Model model) {
-        model.addAttribute("meal", new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES),
-                "", 1000));
+        model.addAttribute("meal", new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES),                "", 1000));
         return "mealForm";
     }
 
@@ -61,7 +51,7 @@ public class JspMealController extends AbstractController {
     }
 
     @PostMapping
-    public String howToSave(HttpServletRequest request) {
+    public String save(HttpServletRequest request) {
         Meal meal = new Meal(
                 LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
@@ -73,12 +63,11 @@ public class JspMealController extends AbstractController {
             super.create(meal);
         }
         return "redirect:/meals";
-        /*if(request.getParameter("id").isEmpty()) {
-            super.create(meal);
-        } else {
-            super.update(meal,getId(request));
-        }
-        return "redirect:/meals";*/
+    }
+
+    private int getId(HttpServletRequest request) {
+        String newId = Objects.requireNonNull(request.getParameter("id"));
+        return Integer.parseInt(newId);
     }
 }
 
