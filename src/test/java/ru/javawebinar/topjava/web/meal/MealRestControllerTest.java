@@ -30,11 +30,10 @@ public class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void get() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + MEAL1_ID))
-                .andExpect(status().isOk())
-                .andDo(print())
+        perform(MockMvcRequestBuilders.get(REST_URL + MEAL1_ID)).andExpect(status().isOk()).andDo(print())
                 // https://jira.spring.io/browse/SPR-14472
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(content()
+                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MEAL_MATCHER.contentJson(meal1));
     }
 
@@ -53,7 +52,6 @@ public class MealRestControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isNoContent());
-
         MEAL_MATCHER.assertMatch(service.get(MEAL1_ID, SecurityUtil.authUserId()), updated);
     }
 
@@ -82,12 +80,17 @@ public class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getBetween() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL +
-                                           "between?startDateTime=2020-01-31T11:00:00&endDateTime=2020-01-31T22:00:00"))
+        perform(MockMvcRequestBuilders.get(REST_URL + "filter")
+                .param("startDate", "2020-01-31")
+                .param("startTime", "11:00:00")
+                .param("endDate", "2020-01-31")
+                .param("endTime", "22:00:00"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(MEAL_TO_MATCHER.contentJson(
-                        new MealTo(meal6.getId(), meal6.getDateTime(),meal6.getDescription(), meal6.getCalories(), true),
-                        new MealTo(meal7.getId(), meal7.getDateTime(), meal7.getDescription(), meal7.getCalories(), true)));
+                        new MealTo(meal7.getId(), meal7.getDateTime(), meal7.getDescription(),
+                                meal7.getCalories(), true),
+                        new MealTo(meal6.getId(), meal6.getDateTime(), meal6.getDescription(),
+                                meal6.getCalories(), true)));
     }
 }
