@@ -26,13 +26,13 @@ class InMemoryAdminRestControllerSpringTest {
     }
 
     @Test
-    public void delete() {
+    void delete() {
         controller.delete(USER_ID);
         Assertions.assertNull(repository.get(USER_ID));
     }
 
     @Test
-    public void deleteNotFound() {
+    void deleteNotFound() {
         Assertions.assertThrows(NotFoundException.class, () -> controller.delete(NOT_FOUND));
     }
 }

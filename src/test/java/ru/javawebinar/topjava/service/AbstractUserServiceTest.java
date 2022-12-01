@@ -20,7 +20,6 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     @Autowired
     protected UserService service;
 
-
     @Test
     public void create() {
         User created = service.create(getNew());
